@@ -32,7 +32,7 @@ def hentai_check(pil, threshold_hentai):
     return False
 
 
-# 05
+# 06
 def furry_check(pil, threshold_furry):
     result = anime_furry_score(pil)
     if float(result["furry"]) >= float(threshold_furry):
@@ -57,7 +57,7 @@ def porn_check(pil, threshold_porn):
     return False
 
 
-# 06
+# 05
 def sexy_check(pil, threshold_sexy):
     result = nsfw_pred_score(pil)
     if float(result['sexy']) >= float(threshold_sexy):
@@ -110,11 +110,11 @@ def nsfw_detect(pil, threshold_r18, threshold_hentai, threshold_furry, threshold
             return black_image_output(), "hentai"
 
         # 05
-        if furry_check(pil, threshold_furry):
-            return black_image_output(), "furry"
-
-        # 06
         if sexy_check(pil, threshold_sexy):
             return black_image_output(), "sexy"
+
+        # 06
+        if furry_check(pil, threshold_furry):
+            return black_image_output(), "furry"
 
     return None, None
