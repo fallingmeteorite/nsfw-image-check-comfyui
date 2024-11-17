@@ -1,0 +1,10 @@
+hbutils
+hfutils
+huggingface_hub
+logging
+numpy
+opencv-python
+pillow
+typing
+
+
