@@ -18,7 +18,7 @@ It also handles token-based authentication for accessing private Hugging Face re
 
 import json
 import os
-from functools import lru_cache
+from threading import Lock
 from typing import Tuple, Optional, List, Dict
 
 import numpy as np
@@ -28,7 +28,7 @@ from hfutils.repository import hf_hub_repo_url
 from huggingface_hub import hf_hub_download
 
 from ..data import rgb_encode, ImageTyping, load_image
-from ..utils import open_onnx_model
+from ..utils import open_onnx_model, ts_lru_cache
 
 try:
     import gradio as gr
@@ -127,6 +127,8 @@ class ClassifyModel:
         self._models = {}
         self._labels = {}
         self._hf_token = hf_token
+        self._global_lock = Lock()
+        self._model_lock = Lock()
 
     def _get_hf_token(self) -> Optional[str]:
         """
@@ -150,17 +152,24 @@ class ClassifyModel:
 
         :raises RuntimeError: If there's an error accessing the Hugging Face repository.
         """
-        if self._model_names is None:
-            # hf_fs = HfFileSystem(token=self._get_hf_token())
-            # self._model_names = [
-            #    hf_normpath(os.path.dirname(os.path.relpath(item, self.repo_id)))
-            #    for item in hf_fs.glob(hf_fs_path(
-            #        repo_id=self.repo_id,
-            #        repo_type='model',
-            #        filename='*/model.onnx',
-            #    ))
-            # ]
-            self._model_names = ["mobilenetv3_v1_pruned_ls0.1"]
+        with self._global_lock:
+            if self._model_names is None:
+
+                #hf_fs = HfFileSystem(token=self._get_hf_token())
+                #self._model_names = [
+                #    hf_normpath(os.path.dirname(os.path.relpath(item, self.repo_id)))
+                #    for item in hf_fs.glob(hf_fs_path(
+                #        repo_id=self.repo_id,
+                #        repo_type='model',
+                #        filename='*/model.onnx',
+                #    ))
+                #]
+                if self.repo_id == "deepghs/anime_furry":
+                    self._model_names = ["mobilenetv3_v0.1_dist"]
+                if self.repo_id == "deepghs/anime_rating":
+                    self._model_names = ["mobilenetv3_v1_pruned_ls0.1"]
+
+
 
         return self._model_names
 
@@ -191,13 +200,15 @@ class ClassifyModel:
 
         :raises RuntimeError: If there's an error downloading or opening the model.
         """
-        if model_name not in self._models:
-            self._check_model_name(model_name)
-            self._models[model_name] = open_onnx_model(hf_hub_download(
-                self.repo_id,
-                f'{model_name}/model.onnx',
-                token=self._get_hf_token(),
-            ))
+        with self._model_lock:
+            if model_name not in self._models:
+                self._check_model_name(model_name)
+                self._models[model_name] = open_onnx_model(hf_hub_download(
+                    self.repo_id,
+                    f'{model_name}/model.onnx',
+                    token=self._get_hf_token(),
+                ))
+
         return self._models[model_name]
 
     def _open_label(self, model_name: str) -> List[str]:
@@ -214,14 +225,16 @@ class ClassifyModel:
 
         :raises RuntimeError: If there's an error downloading or parsing the labels file.
         """
-        if model_name not in self._labels:
-            self._check_model_name(model_name)
-            with open(hf_hub_download(
-                    self.repo_id,
-                    f'{model_name}/meta.json',
-                    token=self._get_hf_token(),
-            ), 'r') as f:
-                self._labels[model_name] = json.load(f)['labels']
+        with self._model_lock:
+            if model_name not in self._labels:
+                self._check_model_name(model_name)
+                with open(hf_hub_download(
+                        self.repo_id,
+                        f'{model_name}/meta.json',
+                        token=self._get_hf_token(),
+                ), 'r') as f:
+                    self._labels[model_name] = json.load(f)['labels']
+
         return self._labels[model_name]
 
     def _raw_predict(self, image: ImageTyping, model_name: str):
@@ -400,7 +413,7 @@ class ClassifyModel:
         )
 
 
-@lru_cache()
+@ts_lru_cache()
 def _open_models_for_repo_id(repo_id: str, hf_token: Optional[str] = None) -> ClassifyModel:
     """
     Open and cache a ClassifyModel instance for the specified repository ID.

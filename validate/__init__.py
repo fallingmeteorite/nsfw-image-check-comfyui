@@ -4,3 +4,5 @@ Overview:
 """
 
 from .rating import *
+from .nsfw import *
+from .furry import *
