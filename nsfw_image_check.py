@@ -14,6 +14,11 @@ class NsfwCheckNode:
             },
             "optional": {
                 "threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+
+                "type_choose": (
+                    ["safe", "r16", "r18"],
+                    {"default": "r18"},)
+
             }
         }
 
@@ -22,8 +27,8 @@ class NsfwCheckNode:
 
     CATEGORY = "image/processing"
 
-    def nsfw_image_check(self, image, threshold):
-        output_info = nsfw_threshold(tensor_to_pil(image), threshold)
+    def nsfw_image_check(self, image, threshold, type_choose):
+        output_info = nsfw_threshold(tensor_to_pil(image), threshold, type_choose)
         if output_info is None:
             return (image,)
         else:
