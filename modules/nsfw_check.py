@@ -1,19 +1,39 @@
-import torch
+import os
+import random
+from torchvision import transforms
+from PIL import Image
 
 from ..validate import anime_rating_score
-
 from ..detect import detect_censors
-
 from ..validate import nsfw_pred_score
-
 from ..validate import anime_furry_score
 
 
-# Tensor data that produces a black graph
-def black_image_output():
-    width, height = 128, 128
-    black_tensor = torch.zeros(1, height, width)
-    return black_tensor
+def get_random_image(directory):
+    # Get all the files in the directory
+    files = os.listdir(directory)
+
+    # Filter out image files (assuming the image file extension is .jpg)
+    image_files = [f for f in files if f.lower().endswith('.jpg')]
+
+    if not image_files:
+        raise ValueError("No image files found in the directory.")
+
+    # Choose a random image
+    random_image_file = random.choice(image_files)
+
+    # Returns the full path to the image
+    return os.path.join(directory, random_image_file)
+
+
+# Generate Tensor data for the warning graph
+def warn_image_output():
+    img = Image.open(get_random_image(f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\img")).convert('RGB')
+    to_tensor = transforms.ToTensor()
+    pil_to_tensor = to_tensor(img)
+    pil_to_tensor = pil_to_tensor.squeeze(0).permute(1, 2, 0)
+    pil_to_tensor = pil_to_tensor.unsqueeze(0)
+    return pil_to_tensor
 
 
 # 02
@@ -65,56 +85,65 @@ def sexy_check(pil, threshold_sexy):
     return False
 
 
-def nsfw_detect(pil, threshold_r18, threshold_hentai, threshold_furry, threshold_genitalia, threshold_porn,
-                threshold_sexy, filter_choose):
-    if filter_choose == "r18_nsfw_check":
-        if r18_check(pil, threshold_r18):
-            return black_image_output(), "r18"
+def nsfw_detect(pil,
+                enabled_check,
+                r18_threshold, r18_enabled,
+                hentai_threshold, hentai_enabled,
+                furry_threshold, furry_enabled,
+                genitalia_threshold, genitalia_enabled,
+                porn_threshold, porn_enabled,
+                sexy_threshold, sexy_enabled,
+                filter_choose):
+    if enabled_check:
 
-    if filter_choose == "hentai_nsfw_check":
-        if hentai_check(pil, threshold_hentai):
-            return black_image_output(), "hentai"
+        if filter_choose == "r18_nsfw_check":
+            if r18_check(pil, r18_threshold):
+                return warn_image_output(), "r18"
 
-    if filter_choose == "furry_nsfw_check":
-        if furry_check(pil, threshold_furry):
-            return black_image_output(), "furry"
+        if filter_choose == "hentai_nsfw_check":
+            if hentai_check(pil, hentai_threshold):
+                return warn_image_output(), "hentai"
 
-    if filter_choose == "genitalia_nsfw_check":
-        if genitalia_check(pil, threshold_genitalia):
-            return black_image_output(), "genitalia"
+        if filter_choose == "furry_nsfw_check":
+            if furry_check(pil, furry_threshold):
+                return warn_image_output(), "furry"
 
-    if filter_choose == "porn_nsfw_check":
-        if porn_check(pil, threshold_porn):
-            return black_image_output(), "porn"
+        if filter_choose == "genitalia_nsfw_check":
+            if genitalia_check(pil, genitalia_threshold):
+                return warn_image_output(), "genitalia"
 
-    if filter_choose == "sexy_nsfw_check":
-        if sexy_check(pil, threshold_sexy):
-            return black_image_output(), "sexy"
+        if filter_choose == "porn_nsfw_check":
+            if porn_check(pil, porn_threshold):
+                return warn_image_output(), "porn"
 
-    # Automatic mode, from the most obvious to the least noticeable
-    if filter_choose == "auto_nsfw_check":
-        # 01
-        if genitalia_check(pil, threshold_genitalia):
-            return black_image_output(), "genitalia"
+        if filter_choose == "sexy_nsfw_check":
+            if sexy_check(pil, sexy_threshold):
+                return warn_image_output(), "sexy"
 
-        # 02
-        if r18_check(pil, threshold_r18):
-            return black_image_output(), "r18"
+        # Automatic mode, from the most obvious to the least noticeable
+        if filter_choose == "auto_nsfw_check":
+            # 01
+            if genitalia_check(pil, genitalia_threshold) and genitalia_enabled:
+                return warn_image_output(), "genitalia"
 
-        # 03
-        if porn_check(pil, threshold_porn):
-            return black_image_output(), "porn"
+            # 02
+            if r18_check(pil, r18_threshold) and r18_enabled:
+                return warn_image_output(), "r18"
 
-        # 04
-        if hentai_check(pil, threshold_hentai):
-            return black_image_output(), "hentai"
+            # 03
+            if porn_check(pil, porn_threshold) and porn_enabled:
+                return warn_image_output(), "porn"
 
-        # 05
-        if sexy_check(pil, threshold_sexy):
-            return black_image_output(), "sexy"
+            # 04
+            if hentai_check(pil, hentai_threshold) and hentai_enabled:
+                return warn_image_output(), "hentai"
 
-        # 06
-        if furry_check(pil, threshold_furry):
-            return black_image_output(), "furry"
+            # 05
+            if sexy_check(pil, sexy_threshold) and sexy_enabled:
+                return warn_image_output(), "sexy"
+
+            # 06
+            if furry_check(pil, furry_threshold) and furry_enabled:
+                return warn_image_output(), "furry"
 
     return None, None
