@@ -105,9 +105,9 @@ class ClassifyModel:
         with self._model_lock:
             if model_name not in self._models:
                 if self.repo_id == "deepghs/anime_furry":
-                    model_load_path = f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_furry\\model.onnx"
+                    model_load_path = "custom_nodes/nsfw-image-check-comfyui/models/models--deepghs--anime_furry/model.onnx"
                 if self.repo_id == "deepghs/anime_rating":
-                    model_load_path = f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_rating\\model.onnx"
+                    model_load_path = "custom_nodes/nsfw-image-check-comfyui/models/models--deepghs--anime_rating/model.onnx"
                 self._models[model_name] = open_onnx_model(model_load_path)
         return self._models[model_name]
 
