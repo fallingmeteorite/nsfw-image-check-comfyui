@@ -1,12 +1,12 @@
 import os
 import random
-from torchvision import transforms
 from PIL import Image
 
 from ..validate import anime_rating_score
 from ..detect import detect_censors
 from ..validate import nsfw_pred_score
 from ..validate import anime_furry_score
+from tensor_to_other import pil_to_tensor
 
 
 def get_random_image(directory):
@@ -29,11 +29,7 @@ def get_random_image(directory):
 # Generate Tensor data for the warning graph
 def warn_image_output():
     img = Image.open(get_random_image(f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\img")).convert('RGB')
-    to_tensor = transforms.ToTensor()
-    pil_to_tensor = to_tensor(img)
-    pil_to_tensor = pil_to_tensor.squeeze(0).permute(1, 2, 0)
-    pil_to_tensor = pil_to_tensor.unsqueeze(0)
-    return pil_to_tensor
+    return pil_to_tensor(img)
 
 
 # 02
