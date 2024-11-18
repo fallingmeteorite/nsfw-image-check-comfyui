@@ -6,7 +6,7 @@ from ..validate import anime_rating_score
 from ..detect import detect_censors
 from ..validate import nsfw_pred_score
 from ..validate import anime_furry_score
-from tensor_to_other import pil_to_tensor
+from .tensor_to_other import pil_to_tensor
 
 
 def get_random_image(directory):
@@ -142,4 +142,4 @@ def nsfw_detect(pil,
             if furry_check(pil, furry_threshold) and furry_enabled:
                 return warn_image_output(), "furry"
 
-    return None, None
+    return None, "this is safe"
