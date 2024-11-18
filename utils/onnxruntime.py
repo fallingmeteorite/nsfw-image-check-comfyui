@@ -1,33 +1,10 @@
-"""
-Overview:
-    Management of onnx models.
-"""
-import logging
 import os
-import shutil
 from typing import Optional
-
-from hbutils.system import pip_install
 
 __all__ = [
     'get_onnx_provider', 'open_onnx_model'
 ]
 
-
-def _ensure_onnxruntime():
-    try:
-        import onnxruntime
-    except (ImportError, ModuleNotFoundError):
-        logging.warning('Onnx runtime not installed, preparing to install ...')
-        if shutil.which('nvidia-smi'):
-            logging.info('Installing onnxruntime-gpu ...')
-            pip_install(['onnxruntime-gpu'], silent=True)
-        else:
-            logging.info('Installing onnxruntime (cpu) ...')
-            pip_install(['onnxruntime'], silent=True)
-
-
-_ensure_onnxruntime()
 from onnxruntime import get_available_providers, get_all_providers, InferenceSession, SessionOptions, \
     GraphOptimizationLevel
 
@@ -73,7 +50,7 @@ def _open_onnx_model(ckpt: str, provider: str, use_cpu: bool = True) -> Inferenc
     if use_cpu and "CPUExecutionProvider" not in providers:
         providers.append("CPUExecutionProvider")
 
-    logging.info(f'Model {ckpt!r} loaded with provider {provider!r}')
+    print(f'Model {ckpt!r} loaded with provider {provider!r}')
     return InferenceSession(ckpt, options, providers=providers)
 
 
