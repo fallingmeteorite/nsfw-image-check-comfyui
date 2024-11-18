@@ -1,6 +1,7 @@
 from .modules.tensor_to_other import tensor_to_pil
 from .modules.nsfw_check import nsfw_detect
 
+
 class NsfwCheckNode:
     def __init__(self):
         pass
@@ -10,29 +11,44 @@ class NsfwCheckNode:
         return {
             # Image input
             "required": {
-                "image_requires_in": ("IMAGE",),
+                "image_requires_in": ("IMAGE", {"default": "", "forceInput": True}),
             },
 
             # Thresholds for all filtering modes
             "optional": {
-                "r18_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
 
-                "hentai_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "enabled_check": ("BOOLEAN", {"default": True}),
 
-                "furry_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "r18_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
 
-                "genitalia_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "r18_enabled": ("BOOLEAN", {"default": True}),
 
-                "porn_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "hentai_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
 
-                "sexy_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "hentai_enabled": ("BOOLEAN", {"default": True}),
+
+                "furry_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
+
+                "furry_enabled": ("BOOLEAN", {"default": True}),
+
+                "genitalia_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
+
+                "genitalia_enabled": ("BOOLEAN", {"default": True}),
+
+                "porn_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
+
+                "porn_enabled": ("BOOLEAN", {"default": True}),
+
+                "sexy_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
+
+                "sexy_enabled": ("BOOLEAN", {"default": True}),
 
                 # Select the app type
                 "filter_choose": (
                     ["r18_nsfw_check", "hentai_nsfw_check", "furry_nsfw_check", "genitalia_nsfw_check",
                      "porn_nsfw_check", "sexy_nsfw_check", "auto_nsfw_check"],
 
-                    {"default": "r18_nsfw_check"},)
+                    {"default": "r18_nsfw_check"},),
 
             }
         }
@@ -44,15 +60,31 @@ class NsfwCheckNode:
 
     CATEGORY = "image/processing"
 
-    def nsfw_image_check(self, image_requires_in, r18_threshold, hentai_threshold, furry_threshold, genitalia_threshold,
-                         porn_threshold, sexy_threshold, filter_choose):
+    def nsfw_image_check(self,
+                         image_requires_in,
+                         enabled_check,
+                         r18_threshold, r18_enabled,
+                         hentai_threshold, hentai_enabled,
+                         furry_threshold, furry_enabled,
+                         genitalia_threshold, genitalia_enabled,
+                         porn_threshold, porn_enabled,
+                         sexy_threshold,sexy_enabled,
+                         filter_choose):
+
         pil_image_info = tensor_to_pil(image_requires_in)
 
-        image_check_info, check_type = nsfw_detect(pil_image_info, r18_threshold, hentai_threshold, furry_threshold,
-                                                   genitalia_threshold, porn_threshold, sexy_threshold, filter_choose)
+        image_check_info, check_type = nsfw_detect(pil_image_info,
+                                                   enabled_check,
+                                                   r18_threshold, r18_enabled,
+                                                   hentai_threshold, hentai_enabled,
+                                                   furry_threshold, furry_enabled,
+                                                   genitalia_threshold, genitalia_enabled,
+                                                   porn_threshold, porn_enabled,
+                                                   sexy_threshold, sexy_enabled,
+                                                   filter_choose)
 
         if image_check_info is None:
             return image_requires_in, "None"
 
-        if not image_check_info is None:
+        if image_check_info is not None:
             return image_check_info, f"|{check_type}| is a filtering rule that is triggered"
