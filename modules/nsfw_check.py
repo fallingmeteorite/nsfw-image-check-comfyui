@@ -23,12 +23,12 @@ def get_random_image(directory):
     random_image_file = random.choice(image_files)
 
     # Returns the full path to the image
-    return os.path.join(directory, random_image_file)
+    return f"custom_nodes/nsfw-image-check-comfyui/img/{random_image_file}"
 
 
 # Generate Tensor data for the warning graph
 def warn_image_output():
-    img = Image.open(get_random_image(f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\img")).convert('RGB')
+    img = Image.open(get_random_image(f"custom_nodes/nsfw-image-check-comfyui/img")).convert('RGB')
     return pil_to_tensor(img)
 
 
