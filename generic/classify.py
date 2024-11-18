@@ -128,9 +128,9 @@ class ClassifyModel:
         with self._model_lock:
             if model_name not in self._labels:
                 if self.repo_id == "deepghs/anime_furry":
-                    config_load_path = f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_furry\\meta.json"
+                    config_load_path = "custom_nodes/nsfw-image-check-comfyui/models/models--deepghs--anime_furry/meta.json"
                 if self.repo_id == "deepghs/anime_rating":
-                    config_load_path = f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_rating\\meta.json"
+                    config_load_path = "custom_nodes/nsfw-image-check-comfyui/models/models--deepghs--anime_rating/meta.json"
 
                 with open(config_load_path, 'r') as f:
                     self._labels[model_name] = json.load(f)['labels']
