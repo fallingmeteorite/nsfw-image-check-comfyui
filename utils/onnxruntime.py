@@ -50,7 +50,6 @@ def _open_onnx_model(ckpt: str, provider: str, use_cpu: bool = True) -> Inferenc
     if use_cpu and "CPUExecutionProvider" not in providers:
         providers.append("CPUExecutionProvider")
 
-    print(f'Model {ckpt!r} loaded with provider {provider!r}')
     return InferenceSession(ckpt, options, providers=providers)
 
 
