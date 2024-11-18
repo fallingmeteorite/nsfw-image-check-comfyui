@@ -19,7 +19,7 @@ class NsfwCheckNode:
 
                 "enabled_check": ("BOOLEAN", {"default": True}),
 
-                "r18_threshold": ("FLOAT", {"default": 0.3, "min": 0, "max": 1, "step": 0.01}),
+                "r18_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
 
                 "r18_enabled": ("BOOLEAN", {"default": True}),
 
@@ -27,19 +27,19 @@ class NsfwCheckNode:
 
                 "hentai_enabled": ("BOOLEAN", {"default": True}),
 
-                "furry_threshold": ("FLOAT", {"default": 0.4, "min": 0, "max": 1, "step": 0.01}),
+                "furry_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
 
                 "furry_enabled": ("BOOLEAN", {"default": True}),
 
-                "genitalia_threshold": ("FLOAT", {"default": 0.2, "min": 0, "max": 1, "step": 0.01}),
+                "genitalia_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
 
                 "genitalia_enabled": ("BOOLEAN", {"default": True}),
 
-                "porn_threshold": ("FLOAT", {"default": 0.2, "min": 0, "max": 1, "step": 0.01}),
+                "porn_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
 
                 "porn_enabled": ("BOOLEAN", {"default": True}),
 
-                "sexy_threshold": ("FLOAT", {"default": 0.2, "min": 0, "max": 1, "step": 0.01}),
+                "sexy_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
 
                 "sexy_enabled": ("BOOLEAN", {"default": True}),
 
@@ -84,7 +84,7 @@ class NsfwCheckNode:
                                                    filter_choose)
 
         if image_check_info is None:
-            return image_requires_in, "None"
+            return image_requires_in, check_type
 
         if image_check_info is not None:
             return image_check_info, f"|{check_type}| is a filtering rule that is triggered"
