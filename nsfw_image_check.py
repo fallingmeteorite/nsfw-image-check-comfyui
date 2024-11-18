@@ -1,7 +1,6 @@
 from .modules.tensor_to_other import tensor_to_pil
 from .modules.nsfw_check import nsfw_detect
 
-
 class NsfwCheckNode:
     def __init__(self):
         pass
@@ -45,14 +44,15 @@ class NsfwCheckNode:
 
     CATEGORY = "image/processing"
 
-    def nsfw_image_check(self, image_requires_in, r18_threshold, hentai_threshold, furry_threshold, genitalia_threshold, porn_threshold, sexy_threshold, filter_choose):
+    def nsfw_image_check(self, image_requires_in, r18_threshold, hentai_threshold, furry_threshold, genitalia_threshold,
+                         porn_threshold, sexy_threshold, filter_choose):
         pil_image_info = tensor_to_pil(image_requires_in)
 
-        image_check_info, check_type = nsfw_detect(pil_image_info, r18_threshold, hentai_threshold, furry_threshold, genitalia_threshold, porn_threshold, sexy_threshold, filter_choose)
+        image_check_info, check_type = nsfw_detect(pil_image_info, r18_threshold, hentai_threshold, furry_threshold,
+                                                   genitalia_threshold, porn_threshold, sexy_threshold, filter_choose)
 
         if image_check_info is None:
             return image_requires_in, "None"
 
         if not image_check_info is None:
-
-            return image_check_info, f"{check_type} is image-triggered filtering rule"
+            return image_check_info, f"|{check_type}| is a filtering rule that is triggered"
