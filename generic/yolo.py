@@ -378,7 +378,7 @@ class YOLOModel:
         with self._model_lock:
             if model_name not in self._models:
                 model = open_onnx_model(
-                    f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_censor_detection\\model.onnx")
+                    "custom_nodes/nsfw-image-check-comfyui/models/models--deepghs--anime_censor_detection/model.onnx")
                 model_metadata = model.get_modelmeta()
                 if 'imgsz' in model_metadata.custom_metadata_map:
                     max_infer_size = max(json.loads(model_metadata.custom_metadata_map['imgsz']))
