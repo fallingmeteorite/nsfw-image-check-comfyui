@@ -1,19 +1,3 @@
-"""
-This module provides a thread-safe version of Python's built-in lru_cache decorator.
-
-The main component of this module is the ts_lru_cache decorator, which wraps the standard
-lru_cache with thread-safe functionality. This is particularly useful in multi-threaded
-environments where cache access needs to be synchronized to prevent race conditions.
-
-Usage:
-    >>> from imgutils.utils import ts_lru_cache
-    ...
-    >>> @ts_lru_cache(maxsize=100)
-    >>> def expensive_function(x, y):
-    ...     # Some expensive computation
-    ...     return x + y
-"""
-
 import threading
 from functools import lru_cache, wraps
 
@@ -33,17 +17,6 @@ def ts_lru_cache(**options):
 
     :return: A thread-safe cached version of the decorated function.
     :rtype: function
-
-    :Example:
-        >>> @ts_lru_cache(maxsize=100)
-        >>> def my_function(x, y):
-        ...     # Function implementation
-        ...     return x + y
-
-    .. note::
-        While this decorator ensures thread-safety, it may introduce some overhead
-        due to lock acquisition. Use it when thread-safety is more critical than
-        maximum performance in multithreaded scenarios.
     """
 
     def _decorator(func):
@@ -56,6 +29,7 @@ def ts_lru_cache(**options):
         :return: The wrapped function with thread-safe caching.
         :rtype: function
         """
+
         @lru_cache(**options)
         @wraps(func)
         def _cached_func(*args, **kwargs):
