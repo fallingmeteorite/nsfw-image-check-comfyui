@@ -1,0 +1,9 @@
+{
+    "labels": [
+        "safe",
+        "r15",
+        "r18"
+    ],
+    "name": "mobilenetv3_large_100",
+    "pretrained": true
+}
