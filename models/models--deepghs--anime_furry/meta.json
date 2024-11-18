@@ -1,0 +1,8 @@
+{
+    "labels": [
+        "non_furry",
+        "furry"
+    ],
+    "name": "mobilenetv3_large_100",
+    "pretrained": true
+}
