@@ -1,18 +1,3 @@
-"""
-This module provides utility functions for image processing and manipulation using the PIL (Python Imaging Library) library.
-
-It includes functions for loading images from various sources, handling multiple images, adding backgrounds to RGBA images,
-and checking for alpha channels. The module is designed to simplify common image-related tasks in Python applications.
-
-Key features:
-- Loading images from different sources (file paths, binary data, file-like objects)
-- Handling multiple images at once
-- Adding backgrounds to RGBA images
-- Checking for alpha channels in images
-
-This module is particularly useful for applications that require image preprocessing or manipulation before further processing or analysis.
-"""
-
 from os import PathLike
 from typing import Union, BinaryIO, List, Tuple, Optional
 
@@ -97,14 +82,6 @@ def load_image(image: ImageTyping, mode=None, force_background: Optional[str] = 
     :rtype: Image.Image
 
     :raises TypeError: If the provided image type is not supported.
-
-    :example:
-    >>> from PIL import Image
-    >>> img = load_image('path/to/image.png', mode='RGB', force_background='white')
-    >>> isinstance(img, Image.Image)
-    True
-    >>> img.mode
-    'RGB'
     """
     if isinstance(image, (str, PathLike, bytes, bytearray, BinaryIO)) or _is_readable(image):
         image = Image.open(image)
@@ -141,14 +118,6 @@ def load_images(images: MultiImagesTyping, mode=None, force_background: Optional
 
     :return: A list of loaded and transformed images.
     :rtype: List[Image.Image]
-
-    :example:
-    >>> img_paths = ['path/to/image1.png', 'path/to/image2.jpg']
-    >>> loaded_images = load_images(img_paths, mode='RGB')
-    >>> len(loaded_images)
-    2
-    >>> all(isinstance(img, Image.Image) for img in loaded_images)
-    True
     """
     if not isinstance(images, (list, tuple)):
         images = [images]
@@ -172,13 +141,6 @@ def add_background_for_rgba(image: ImageTyping, background: str = 'white'):
 
     :return: The image with the added background, converted to RGB.
     :rtype: Image.Image
-
-    :example:
-    >>> from PIL import Image
-    >>> rgba_image = Image.new('RGBA', (100, 100), (255, 0, 0, 128))
-    >>> rgb_image = add_background_for_rgba(rgba_image, background='blue')
-    >>> rgb_image.mode
-    'RGB'
     """
     image = load_image(image, force_background=None, mode=None)
     try:
