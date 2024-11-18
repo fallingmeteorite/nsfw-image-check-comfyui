@@ -45,10 +45,10 @@ class NsfwCheckNode:
 
     CATEGORY = "image/processing"
 
-    def nsfw_image_check(self, image_requires_in, threshold_r18, threshold_hentai, threshold_furry, threshold_genitalia, threshold_porn, threshold_sexy, filter_choose):
+    def nsfw_image_check(self, image_requires_in, r18_threshold, hentai_threshold, furry_threshold, genitalia_threshold, porn_threshold, sexy_threshold, filter_choose):
         pil_image_info = tensor_to_pil(image_requires_in)
 
-        image_check_info, check_type = nsfw_detect(pil_image_info, threshold_r18, threshold_hentai, threshold_furry, threshold_genitalia, threshold_porn, threshold_sexy, filter_choose)
+        image_check_info, check_type = nsfw_detect(pil_image_info, r18_threshold, hentai_threshold, furry_threshold, genitalia_threshold, porn_threshold, sexy_threshold, filter_choose)
 
         if image_check_info is None:
             return image_requires_in, "None"
