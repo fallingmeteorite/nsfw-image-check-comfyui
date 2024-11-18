@@ -1,20 +1,3 @@
-"""
-Overview:
-    Detect human censor points (including female's nipples and genitals of both male and female) in anime images.
-
-    Trained on dataset `deepghs/anime_censor_detection <https://huggingface.co/datasets/deepghs/anime_censor_detection>`_ with YOLOv8.
-
-    .. collapse:: Overview of Censor Detect (NSFW Warning!!!)
-
-        .. image:: censor_detect_demo.plot.py.svg
-            :align: center
-
-    This is an overall benchmark of all the censor detect models:
-
-    .. image:: censor_detect_benchmark.plot.py.svg
-        :align: center
-
-"""
 from typing import List, Tuple, Optional
 
 from ..data import ImageTyping
@@ -64,23 +47,6 @@ def detect_censors(image: ImageTyping, level: str = 's', version: str = 'v1.0', 
 
     :raises ValueError: If an invalid level is provided.
     :raises RuntimeError: If the model fails to load or process the image.
-
-    Examples::
-        >>> from imgutils.detect import detect_censors, detection_visualize
-        >>>
-        >>> image = 'nude_girl.png'
-        >>> result = detect_censors(image)  # detect it
-        >>> result
-        [
-            ((365, 264, 399, 289), 'nipple_f', 0.7473511695861816),
-            ((224, 260, 252, 285), 'nipple_f', 0.6830288171768188),
-            ((206, 523, 240, 608), 'pussy', 0.6799028515815735)
-        ]
-        >>>
-        >>> # visualize it
-        >>> from matplotlib import pyplot as plt
-        >>> plt.imshow(detection_visualize(image, result))
-        >>> plt.show()
     """
     return yolo_predict(
         image=image,
