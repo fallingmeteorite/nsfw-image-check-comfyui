@@ -1,5 +1,5 @@
-from .models.tensor_to_other import tensor_to_pil
-from .models.nsfw_check import nsfw_detect
+from .modules.tensor_to_other import tensor_to_pil
+from .modules.nsfw_check import nsfw_detect
 
 
 class NsfwCheckNode:
@@ -16,17 +16,17 @@ class NsfwCheckNode:
 
             # Thresholds for all filtering modes
             "optional": {
-                "threshold_r18": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "r18_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
 
-                "threshold_hentai": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "hentai_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
 
-                "threshold_furry": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "furry_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
 
-                "threshold_genitalia": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "genitalia_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
 
-                "threshold_porn": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "porn_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
 
-                "threshold_sexy": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
+                "sexy_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1}),
 
                 # Select the app type
                 "filter_choose": (
