@@ -1,21 +1,3 @@
-"""
-Generic tools for classification models.
-
-This module provides utilities and classes for working with classification models,
-particularly those stored in Hugging Face repositories. It includes functions for
-image encoding, model loading, and prediction, as well as a main `ClassifyModel` class
-that manages the interaction with classification models.
-
-Key components:
-
-- Image encoding and preprocessing
-- ClassifyModel: A class for managing and using classification models
-- Utility functions for making predictions with classification models
-
-The module is designed to work with ONNX models and supports various image input formats.
-It also handles token-based authentication for accessing private Hugging Face repositories.
-"""
-
 import json
 import os
 from threading import Lock
@@ -23,34 +5,15 @@ from typing import Tuple, Optional, List, Dict
 
 import numpy as np
 from PIL import Image
-from hfutils.operate import get_hf_client
-from hfutils.repository import hf_hub_repo_url
-from huggingface_hub import hf_hub_download
 
 from ..data import rgb_encode, ImageTyping, load_image
 from ..utils import open_onnx_model, ts_lru_cache
-
-try:
-    import gradio as gr
-except (ImportError, ModuleNotFoundError):
-    gr = None
 
 __all__ = [
     'ClassifyModel',
     'classify_predict_score',
     'classify_predict',
 ]
-
-
-def _check_gradio_env():
-    """
-    Check if the Gradio library is installed and available.
-
-    :raises EnvironmentError: If Gradio is not installed.
-    """
-    if gr is None:
-        raise EnvironmentError(f'Gradio required for launching webui-based demo.\n'
-                               f'Please install it with `pip install dghs-imgutils[demo]`.')
 
 
 def _img_encode(image: Image.Image, size: Tuple[int, int] = (384, 384),
@@ -106,11 +69,6 @@ class ClassifyModel:
     :ivar _labels: Dictionary of labels for each model.
     :ivar _hf_token: The Hugging Face API token.
 
-    Usage:
-        >>> model = ClassifyModel("username/repo_name")
-        >>> image = Image.open("path/to/image.jpg")
-        >>> prediction, score = model.predict(image, "model_name")
-        >>> print(f"Predicted class: {prediction}, Score: {score}")
     """
 
     def __init__(self, repo_id: str, hf_token: Optional[str] = None):
@@ -130,62 +88,6 @@ class ClassifyModel:
         self._global_lock = Lock()
         self._model_lock = Lock()
 
-    def _get_hf_token(self) -> Optional[str]:
-        """
-        Get the Hugging Face token from the instance variable or environment variable.
-
-        :return: The Hugging Face token.
-        :rtype: Optional[str]
-        """
-        return self._hf_token or os.environ.get('HF_TOKEN')
-
-    @property
-    def model_names(self) -> List[str]:
-        """
-        Get the list of available model names in the repository.
-
-        This property lazily loads the model names from the Hugging Face repository
-        and caches them for future use.
-
-        :return: The list of model names available in the repository.
-        :rtype: List[str]
-
-        :raises RuntimeError: If there's an error accessing the Hugging Face repository.
-        """
-        with self._global_lock:
-            if self._model_names is None:
-
-                #hf_fs = HfFileSystem(token=self._get_hf_token())
-                #self._model_names = [
-                #    hf_normpath(os.path.dirname(os.path.relpath(item, self.repo_id)))
-                #    for item in hf_fs.glob(hf_fs_path(
-                #        repo_id=self.repo_id,
-                #        repo_type='model',
-                #        filename='*/model.onnx',
-                #    ))
-                #]
-                if self.repo_id == "deepghs/anime_furry":
-                    self._model_names = ["mobilenetv3_v0.1_dist"]
-                if self.repo_id == "deepghs/anime_rating":
-                    self._model_names = ["mobilenetv3_v1_pruned_ls0.1"]
-
-
-
-        return self._model_names
-
-    def _check_model_name(self, model_name: str):
-        """
-        Check if the given model name is valid and available in the repository.
-
-        :param model_name: The name of the model to check.
-        :type model_name: str
-
-        :raises ValueError: If the model name is not found in the list of available models.
-        """
-        if model_name not in self.model_names:
-            raise ValueError(f'Unknown model {model_name!r} in model repository {self.repo_id!r}, '
-                             f'models {self.model_names!r} are available.')
-
     def _open_model(self, model_name: str):
         """
         Open and cache the specified ONNX model.
@@ -202,13 +104,11 @@ class ClassifyModel:
         """
         with self._model_lock:
             if model_name not in self._models:
-                self._check_model_name(model_name)
-                self._models[model_name] = open_onnx_model(hf_hub_download(
-                    self.repo_id,
-                    f'{model_name}/model.onnx',
-                    token=self._get_hf_token(),
-                ))
-
+                if self.repo_id == "deepghs/anime_furry":
+                    model_load_path = f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_furry\\model.onnx"
+                if self.repo_id == "deepghs/anime_rating":
+                    model_load_path = f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_rating\\model.onnx"
+                self._models[model_name] = open_onnx_model(model_load_path)
         return self._models[model_name]
 
     def _open_label(self, model_name: str) -> List[str]:
@@ -227,12 +127,12 @@ class ClassifyModel:
         """
         with self._model_lock:
             if model_name not in self._labels:
-                self._check_model_name(model_name)
-                with open(hf_hub_download(
-                        self.repo_id,
-                        f'{model_name}/meta.json',
-                        token=self._get_hf_token(),
-                ), 'r') as f:
+                if self.repo_id == "deepghs/anime_furry":
+                    config_load_path = f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_furry\\meta.json"
+                if self.repo_id == "deepghs/anime_rating":
+                    config_load_path = f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--anime_rating\\meta.json"
+
+                with open(config_load_path, 'r') as f:
                     self._labels[model_name] = json.load(f)['labels']
 
         return self._labels[model_name]
@@ -287,130 +187,6 @@ class ClassifyModel:
         output = self._raw_predict(image, model_name)
         values = dict(zip(self._open_label(model_name), map(lambda x: x.item(), output[0])))
         return values
-
-    def predict(self, image: ImageTyping, model_name: str) -> Tuple[str, float]:
-        """
-        Predict the class with the highest score for the given image.
-
-        This method runs the image through the model and returns the predicted class and its score.
-
-        :param image: The input image to classify.
-        :type image: ImageTyping
-        :param model_name: The name of the model to use for prediction.
-        :type model_name: str
-
-        :return: A tuple containing the predicted class label and its score.
-        :rtype: Tuple[str, float]
-
-        :raises ValueError: If the model name is invalid.
-        :raises RuntimeError: If there's an error during prediction.
-        """
-        output = self._raw_predict(image, model_name)[0]
-        max_id = np.argmax(output)
-        return self._open_label(model_name)[max_id], output[max_id].item()
-
-    def clear(self):
-        """
-        Clear the cached models and labels.
-
-        This method frees up memory by removing all loaded models and labels from the cache.
-        """
-        self._models.clear()
-        self._labels.clear()
-
-    def make_ui(self, default_model_name: Optional[str] = None):
-        """
-        Create the user interface components for the classifier model demo.
-
-        This method sets up the Gradio UI components including an image input, model selection dropdown,
-        submit button, and output label. It also configures the interaction between these components.
-
-        :param default_model_name: The name of the default model to be selected in the dropdown.
-                                   If None, the most recently updated model will be selected.
-        :type default_model_name: Optional[str]
-
-        :raises ImportError: If Gradio is not installed or properly configured.
-
-        :Example:
-        >>> model = ClassifyModel("username/repo_name")
-        >>> model.make_ui(default_model_name="model_v1")
-        """
-
-        # demo for classifier model
-        _check_gradio_env()
-        model_list = self.model_names
-        if not default_model_name:
-            hf_client = get_hf_client(hf_token=self._get_hf_token())
-            selected_model_name, selected_time = None, None
-            for fileitem in hf_client.get_paths_info(
-                    repo_id=self.repo_id,
-                    repo_type='model',
-                    paths=[f'{model_name}/model.onnx' for model_name in model_list],
-                    expand=True,
-            ):
-                if not selected_time or fileitem.last_commit.date > selected_time:
-                    selected_model_name = os.path.dirname(fileitem.path)
-                    selected_time = fileitem.last_commit.date
-            default_model_name = selected_model_name
-
-        with gr.Row():
-            with gr.Column():
-                gr_input_image = gr.Image(type='pil', label='Original Image')
-                gr_model = gr.Dropdown(model_list, value=default_model_name, label='Model')
-                gr_submit = gr.Button(value='Submit', variant='primary')
-
-            with gr.Column():
-                gr_output = gr.Label(label='Prediction')
-
-            gr_submit.click(
-                self.predict_score,
-                inputs=[
-                    gr_input_image,
-                    gr_model,
-                ],
-                outputs=[gr_output],
-            )
-
-    def launch_demo(self, default_model_name: Optional[str] = None,
-                    server_name: Optional[str] = None, server_port: Optional[int] = None, **kwargs):
-        """
-        Launch the Gradio demo for the classifier model.
-
-        This method creates a Gradio Blocks interface, sets up the UI components using make_ui(),
-        and launches the demo server.
-
-        :param default_model_name: The name of the default model to be selected in the dropdown.
-        :type default_model_name: Optional[str]
-        :param server_name: The name of the server to run the demo on. Defaults to None.
-        :type server_name: Optional[str]
-        :param server_port: The port number to run the demo on. Defaults to None.
-        :type server_port: Optional[int]
-        :param kwargs: Additional keyword arguments to pass to the Gradio launch method.
-
-        :raises ImportError: If Gradio is not installed or properly configured.
-
-        :Example:
-        >>> model = ClassifyModel("username/repo_name")
-        >>> model.launch_demo(default_model_name="model_v1", server_name="0.0.0.0", server_port=7860)
-        """
-
-        _check_gradio_env()
-        with gr.Blocks() as demo:
-            with gr.Row():
-                with gr.Column():
-                    repo_url = hf_hub_repo_url(repo_id=self.repo_id, repo_type='model')
-                    gr.HTML(f'<h2 style="text-align: center;">Classifier Demo For {self.repo_id}</h2>')
-                    gr.Markdown(f'This is the quick demo for classifier model [{self.repo_id}]({repo_url}). '
-                                f'Powered by `dghs-imgutils`\'s quick demo module.')
-
-            with gr.Row():
-                self.make_ui(default_model_name=default_model_name)
-
-        demo.launch(
-            server_name=server_name,
-            server_port=server_port,
-            **kwargs,
-        )
 
 
 @ts_lru_cache()
