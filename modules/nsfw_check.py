@@ -9,7 +9,7 @@ from ..validate import anime_furry_score
 from .tensor_to_other import pil_to_tensor
 
 
-def add_text_to_image(image, text, position=(0, 256), font_path='custom_nodes/nsfw-image-check-comfyui/img/fonts/segoesc.ttf',
+def add_text_to_image(image, text, position=(0, 256), font_path='custom_nodes/nsfw-image-check-comfyui/fonts/segoesc.ttf',
                       font_size=30, color=(255, 48, 48)):
     """
     Add text to the image
