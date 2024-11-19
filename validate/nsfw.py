@@ -35,7 +35,7 @@ def _open_nsfw_model(model: str = _DEFAULT_MODEL_NAME):
     :return: The loaded NSFW model.
     :rtype: onnxruntime.InferenceSession
     """
-    return open_onnx_model(f"{os.getcwd()}\\custom_nodes\\nsfw-image-check-comfyui\\models\\models--deepghs--imgutils-models\\nsfwjs.onnx")
+    return open_onnx_model("custom_nodes/nsfw-image-check-comfyui/models/models--deepghs--imgutils-models/nsfwjs.onnx")
 
 
 def _image_preprocess(image, size: int = 224) -> np.ndarray:
