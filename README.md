@@ -36,6 +36,11 @@ enabled_check:是否开启检测,默认True
 
 filter_choose:启用的筛选模式,除了auto之外都是单个特征筛选,推荐选择auto
 
+## 引用
+插件使用了https://github.com/deepghs/imgutils库
 
+但是由于插件禁用了模型下载等，所以并没有安装这个库，而是修改部分代码直接存放在插件文件夹下
+
+所以在这里写明
 
 
