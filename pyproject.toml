@@ -10,6 +10,6 @@ Repository = "https://github.com/fallingmeteorite/nsfw-image-check-comfyui"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
-PublisherId = "fallingmeteorite"
+PublisherId = "falling"
 DisplayName = "nsfw-image-check-comfyui"
 Icon = ""
