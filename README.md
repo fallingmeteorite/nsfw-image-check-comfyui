@@ -1,46 +1,47 @@
-# nsfw-image-check-comfyui使用手册
+# nsfw-image-check-comfyui Manual
 
-## 安装
-在custom_nodes目录下进行
+## Installation
+In the custom_nodes directory
 ```
 git clone https://github.com/fallingmeteorite/nsfw-image-check-comfyui.git
 cd nsfw-image-check-comfyui
 pip install -r requirements.txt
 ```
 
-## 节点介绍
-节点名:Nsfw Image Check Node
+## Node introduction
+Node name:Nsfw Image Check Node
 ![img.png](img.png)
-输入(image_requires_in)为IMAGE
+Input (image_requires_in) is IMAGE
 
-输出(image_requires_out)为IMAGE
+Output (image_requires_out) is IMAGE
 
-输出(corresponding_filter_entries)为STRING
-
-
-image_requires_in:s输入图.通常接在VAE Decode后面或者load image
-
-image_requires_out:用于输出图片,筛选通过输出原图否则输出警告图
-
-corresponding_filter_entries:用于告诉被触发的特征筛选
+Output (Colespontin_Fürth_Entris) is Sterling
 
 
-## 使用
-模型已经预下载完毕,插件无需联网
+image_requires_in: Input diagram. It is usually followed by VAE Decode or load image
 
-enabled_check:是否开启检测,默认True
+image_requires_out: Used to output pictures, filter by outputting the original image or output the warning image
 
-后缀为threshold:触发筛选阈值,越低效果越强,范围(0~1),默认0.5
+corresponding_filter_entries: Used to tell the triggered feature filtering
 
-后缀为enabled:是否开启该特征的检测(在filter_choose为auto的时候生效)
 
-filter_choose:启用的筛选模式,除了auto之外都是单个特征筛选,推荐选择auto
+## Use
+The model is pre-downloaded, and the plug-in does not need to be connected to the Internet
 
-## 引用
-插件使用了https://github.com/deepghs/imgutils
+enabled_check: Whether to enable detection, True by default
 
-但是由于插件禁用了模型下载等，所以并没有安装这个库，而是修改部分代码直接存放在插件文件夹下
+Suffix threshold: trigger the filter threshold, the lower the filter, the stronger the effect, the range (0~1), the default is 0.5
 
-所以在这里写明
+Suffix enabled: whether to enable the detection of the feature (takes effect when the filter_choose is auto)
+
+filter_choose: The enabled filtering mode is a single feature except auto, and it is recommended to select auto
+
+The image you want to replace is placed in the img folder with the suffix .jpg, and the file life needs to be changed to a number
+
+## Refer
+Plugins are used:https://github.com/deepghs/imgutils
+
+However, because the plugin disables model downloading, etc., this library is not installed, but part of the modified code is directly stored in the plugin folder
+
 
 

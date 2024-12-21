@@ -1,8 +1,7 @@
-import os
-from typing import Mapping, Tuple
-
 import numpy as np
+import os
 from PIL import Image
+from typing import Mapping, Tuple
 
 from ..data import load_image, ImageTyping
 from ..utils import open_onnx_model, ts_lru_cache

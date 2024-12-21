@@ -1,5 +1,5 @@
-from .modules.tensor_to_other import tensor_to_pil
 from .modules.nsfw_check import nsfw_detect
+from .modules.tensor_to_other import tensor_to_pil
 
 
 class NsfwCheckNode:
@@ -68,7 +68,7 @@ class NsfwCheckNode:
                          furry_threshold, furry_enabled,
                          genitalia_threshold, genitalia_enabled,
                          porn_threshold, porn_enabled,
-                         sexy_threshold,sexy_enabled,
+                         sexy_threshold, sexy_enabled,
                          filter_choose):
 
         pil_image_info = tensor_to_pil(image_requires_in)

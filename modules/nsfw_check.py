@@ -2,11 +2,11 @@ import os
 import random
 from PIL import Image
 
-from ..validate import anime_rating_score
-from ..detect import detect_censors
-from ..validate import nsfw_pred_score
-from ..validate import anime_furry_score
 from .tensor_to_other import pil_to_tensor
+from ..detect import detect_censors
+from ..validate import anime_furry_score
+from ..validate import anime_rating_score
+from ..validate import nsfw_pred_score
 
 
 def get_random_image(directory):

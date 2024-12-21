@@ -3,5 +3,6 @@ opencv-python
 pillow
 typing
 onnxruntime
+torchvision
 
 

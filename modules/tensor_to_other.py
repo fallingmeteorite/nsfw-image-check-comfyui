@@ -1,7 +1,7 @@
+import cv2
 import numpy as np
 from PIL import Image
 from torchvision import transforms
-import cv2
 
 
 def tensor_to_pil(tensor):

@@ -1,10 +1,9 @@
 import json
+import numpy as np
 import os
+from PIL import Image
 from threading import Lock
 from typing import Tuple, Optional, List, Dict
-
-import numpy as np
-from PIL import Image
 
 from ..data import rgb_encode, ImageTyping, load_image
 from ..utils import open_onnx_model, ts_lru_cache

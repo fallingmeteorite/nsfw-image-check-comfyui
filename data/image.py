@@ -1,7 +1,6 @@
+from PIL import Image
 from os import PathLike
 from typing import Union, BinaryIO, List, Tuple, Optional
-
-from PIL import Image
 
 __all__ = [
     'ImageTyping',

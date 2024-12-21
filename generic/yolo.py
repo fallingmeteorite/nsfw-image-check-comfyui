@@ -1,12 +1,11 @@
 import ast
 import json
 import math
+import numpy as np
 import os
+from PIL import Image
 from threading import Lock
 from typing import List, Optional, Tuple
-
-import numpy as np
-from PIL import Image
 
 from ..data import load_image, rgb_encode, ImageTyping
 from ..utils import open_onnx_model, ts_lru_cache
