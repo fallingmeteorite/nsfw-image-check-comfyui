@@ -10,6 +10,9 @@ pip install -r requirements.txt
 
 ## Node introduction
 Node name:Nsfw Image Check Node
+
+Block NSFW image output
+
 ![img.png](img.png)
 Input (image_requires_in) is IMAGE
 
