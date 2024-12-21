@@ -1,0 +1,15 @@
+[project]
+name = "nsfw-image-check-comfyui"
+description = "NODES:Nsfw Image Check Node"
+version = "1.0.0"
+license = {file = "LICENSE"}
+dependencies = ["numpy", "opencv-python", "pillow", "typing", "onnxruntime"]
+
+[project.urls]
+Repository = "https://github.com/fallingmeteorite/nsfw-image-check-comfyui"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "nsfw-image-check-comfyui"
+Icon = ""
