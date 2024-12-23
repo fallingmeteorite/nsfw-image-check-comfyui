@@ -9,6 +9,24 @@ from ..validate import anime_rating_score
 from ..validate import nsfw_pred_score
 
 
+def get_value(data):
+    # Initialize variables
+    nipple_f_value = 0
+    pussy_value = 0
+    penis_value = 0
+
+    # Traverse the list
+    for item in data:
+        if item[1] == 'nipple_f':
+            nipple_f_value = item[2]
+        elif item[1] == 'pussy':
+            pussy_value = item[2]
+        elif item[1] == 'penis':
+            penis_value = item[2]
+
+    return nipple_f_value, pussy_value, penis_value
+
+
 def get_random_image(directory):
     # Get all the files in the directory
     files = os.listdir(directory)
@@ -58,10 +76,15 @@ def furry_check(pil, threshold_furry):
 
 # 01
 def genitalia_check(pil, threshold_genitalia):
-    result = detect_censors(pil)
-    if not result == []:
-        if float(result[0][2]) >= float(threshold_genitalia):
-            return True
+    nipple_f_value, pussy_value, penis_value = get_value(detect_censors(pil))
+    if float(nipple_f_value) >= float(threshold_genitalia):
+        return True
+
+    if float(pussy_value) >= float(threshold_genitalia):
+        return True
+
+    if float(penis_value) >= float(threshold_genitalia):
+        return True
     return False
 
 
@@ -142,4 +165,4 @@ def nsfw_detect(pil,
             if furry_check(pil, furry_threshold) and furry_enabled:
                 return warn_image_output(), "furry"
 
-    return None, "this is safe"
+    return None, "The pictures are safe"

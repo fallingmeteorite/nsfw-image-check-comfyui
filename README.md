@@ -14,18 +14,19 @@ Node name:Nsfw Image Check Node
 Block NSFW image output
 
 ![img.png](img.png)
-Input (image_requires_in) is IMAGE
+Interface
 
-Output (image_requires_out) is IMAGE
+`image_requires_in` is IMAGE
 
-Output (Colespontin_Fürth_Entris) is Sterling
+`image_requires_out` is IMAGE
 
+`corresponding_filter_entries` is string
 
-image_requires_in: Input diagram. It is usually followed by VAE Decode or load image
+`image_requires_in`: Input diagram. It is usually followed by VAE Decode or load image
 
-image_requires_out: Used to output pictures, filter by outputting the original image or output the warning image
+`image_requires_out`: Used to output pictures, filter by outputting the original image or output the warning image
 
-corresponding_filter_entries: Used to tell the triggered feature filtering
+`corresponding_filter_entries`: Used to tell the triggered feature filtering
 
 
 ## Use
