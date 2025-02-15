@@ -1,5 +1,7 @@
 import os
 import random
+from typing import Tuple, Optional, List, Any
+
 from PIL import Image
 
 from .tensor_to_other import pil_to_tensor
@@ -9,25 +11,43 @@ from ..validate import anime_rating_score
 from ..validate import nsfw_pred_score
 
 
-def get_value(data):
+def get_value(data: List[Tuple[Tuple[int, int, int, int], str, float]]) -> Tuple[float, float, float]:
+    """
+    Extract values for 'nipple_f', 'pussy', and 'penis' from the input data.
+
+    Parameters:
+    data (List[Tuple[Tuple[int, int, int, int], str, float]]): List of tuples containing bounding box coordinates, label, and score.
+
+    Returns:
+    Tuple[float, float, float]: Values for 'nipple_f', 'pussy', and 'penis'.
+    """
     # Initialize variables
-    nipple_f_value = 0
-    pussy_value = 0
-    penis_value = 0
+    nipple_f_value = 0.0
+    pussy_value = 0.0
+    penis_value = 0.0
 
     # Traverse the list
     for item in data:
         if item[1] == 'nipple_f':
-            nipple_f_value = item[2]
+            nipple_f_value = float(item[2])
         elif item[1] == 'pussy':
-            pussy_value = item[2]
+            pussy_value = float(item[2])
         elif item[1] == 'penis':
-            penis_value = item[2]
+            penis_value = float(item[2])
 
     return nipple_f_value, pussy_value, penis_value
 
 
-def get_random_image(directory):
+def get_random_image(directory: str) -> str:
+    """
+    Get a random image file from the specified directory.
+
+    Parameters:
+    directory (str): Directory containing image files.
+
+    Returns:
+    str: Full path to a random image file.
+    """
     # Get all the files in the directory
     files = os.listdir(directory)
 
@@ -45,76 +65,147 @@ def get_random_image(directory):
 
 
 # Generate Tensor data for the warning graph
-def warn_image_output():
-    img = Image.open(get_random_image(f"custom_nodes/nsfw-image-check-comfyui/img")).convert('RGB')
+def warn_image_output() -> Optional[Any]:
+    """
+    Convert a random image from the specified directory to a tensor.
+
+    Returns:
+    Optional[Any]: Tensor containing the warning image.
+    """
+    img_path = get_random_image(f"custom_nodes/nsfw-image-check-comfyui/img")
+    img = Image.open(img_path).convert('RGB')
     return pil_to_tensor(img)
 
 
 # 02
-def r18_check(pil, threshold_r18):
+def r18_check(pil: Image.Image, threshold_r18: float) -> bool:
+    """
+    Check if the 'r18' score meets or exceeds the threshold.
+
+    Parameters:
+    pil (Image.Image): Input PIL image.
+    threshold_r18 (float): Threshold for 'r18' score.
+
+    Returns:
+    bool: True if the score meets or exceeds the threshold, False otherwise.
+    """
     result = anime_rating_score(pil)
-    if float(result['r18']) >= float(threshold_r18):
-        return True
-    return False
+    return float(result['r18']) >= threshold_r18
 
 
 # 04
-def hentai_check(pil, threshold_hentai):
+def hentai_check(pil: Image.Image, threshold_hentai: float) -> bool:
+    """
+    Check if the 'hentai' score meets or exceeds the threshold.
+
+    Parameters:
+    pil (Image.Image): Input PIL image.
+    threshold_hentai (float): Threshold for 'hentai' score.
+
+    Returns:
+    bool: True if the score meets or exceeds the threshold, False otherwise.
+    """
     result = nsfw_pred_score(pil)
-    if float(result['hentai']) >= float(threshold_hentai):
-        return True
-    return False
+    return float(result['hentai']) >= threshold_hentai
 
 
 # 06
-def furry_check(pil, threshold_furry):
+def furry_check(pil: Image.Image, threshold_furry: float) -> bool:
+    """
+    Check if the 'furry' score meets or exceeds the threshold.
+
+    Parameters:
+    pil (Image.Image): Input PIL image.
+    threshold_furry (float): Threshold for 'furry' score.
+
+    Returns:
+    bool: True if the score meets or exceeds the threshold, False otherwise.
+    """
     result = anime_furry_score(pil)
-    if float(result["furry"]) >= float(threshold_furry):
-        return True
-    return False
+    return float(result["furry"]) >= threshold_furry
 
 
 # 01
-def genitalia_check(pil, threshold_genitalia):
+def genitalia_check(pil: Image.Image, threshold_genitalia: float) -> bool:
+    """
+    Check if any of the 'nipple_f', 'pussy', or 'penis' scores meet or exceed the threshold.
+
+    Parameters:
+    pil (Image.Image): Input PIL image.
+    threshold_genitalia (float): Threshold for genitalia scores.
+
+    Returns:
+    bool: True if any score meets or exceeds the threshold, False otherwise.
+    """
     nipple_f_value, pussy_value, penis_value = get_value(detect_censors(pil))
-    if float(nipple_f_value) >= float(threshold_genitalia):
-        return True
-
-    if float(pussy_value) >= float(threshold_genitalia):
-        return True
-
-    if float(penis_value) >= float(threshold_genitalia):
-        return True
-    return False
+    return nipple_f_value >= threshold_genitalia or pussy_value >= threshold_genitalia or penis_value >= threshold_genitalia
 
 
 # 03
-def porn_check(pil, threshold_porn):
+def porn_check(pil: Image.Image, threshold_porn: float) -> bool:
+    """
+    Check if the 'porn' score meets or exceeds the threshold.
+
+    Parameters:
+    pil (Image.Image): Input PIL image.
+    threshold_porn (float): Threshold for 'porn' score.
+
+    Returns:
+    bool: True if the score meets or exceeds the threshold, False otherwise.
+    """
     result = nsfw_pred_score(pil)
-    if float(result['porn']) >= float(threshold_porn):
-        return True
-    return False
+    return float(result['porn']) >= threshold_porn
 
 
 # 05
-def sexy_check(pil, threshold_sexy):
+def sexy_check(pil: Image.Image, threshold_sexy: float) -> bool:
+    """
+    Check if the 'sexy' score meets or exceeds the threshold.
+
+    Parameters:
+    pil (Image.Image): Input PIL image.
+    threshold_sexy (float): Threshold for 'sexy' score.
+
+    Returns:
+    bool: True if the score meets or exceeds the threshold, False otherwise.
+    """
     result = nsfw_pred_score(pil)
-    if float(result['sexy']) >= float(threshold_sexy):
-        return True
-    return False
+    return float(result['sexy']) >= threshold_sexy
 
 
-def nsfw_detect(pil,
-                enabled_check,
-                r18_threshold, r18_enabled,
-                hentai_threshold, hentai_enabled,
-                furry_threshold, furry_enabled,
-                genitalia_threshold, genitalia_enabled,
-                porn_threshold, porn_enabled,
-                sexy_threshold, sexy_enabled,
-                filter_choose):
+def nsfw_detect(pil: Image.Image,
+                enabled_check: bool,
+                r18_threshold: float, r18_enabled: bool,
+                hentai_threshold: float, hentai_enabled: bool,
+                furry_threshold: float, furry_enabled: bool,
+                genitalia_threshold: float, genitalia_enabled: bool,
+                porn_threshold: float, porn_enabled: bool,
+                sexy_threshold: float, sexy_enabled: bool,
+                filter_choose: str) -> Tuple[Optional[Any], str]:
+    """
+    Detect NSFW content in the image based on the selected filter mode.
+
+    Parameters:
+    pil (Image.Image): Input PIL image.
+    enabled_check (bool): Whether to enable NSFW checks.
+    r18_threshold (float): Threshold for 'r18' score.
+    r18_enabled (bool): Whether to enable 'r18' check.
+    hentai_threshold (float): Threshold for 'hentai' score.
+    hentai_enabled (bool): Whether to enable 'hentai' check.
+    furry_threshold (float): Threshold for 'furry' score.
+    furry_enabled (bool): Whether to enable 'furry' check.
+    genitalia_threshold (float): Threshold for genitalia scores.
+    genitalia_enabled (bool): Whether to enable genitalia check.
+    porn_threshold (float): Threshold for 'porn' score.
+    porn_enabled (bool): Whether to enable 'porn' check.
+    sexy_threshold (float): Threshold for 'sexy' score.
+    sexy_enabled (bool): Whether to enable 'sexy' check.
+    filter_choose (str): Selected filter mode.
+
+    Returns:
+    Tuple[Optional[Any], str]: Tensor containing the warning image and the corresponding filter type if triggered, otherwise None and a safety message.
+    """
     if enabled_check:
-
         if filter_choose == "r18_nsfw_check":
             if r18_check(pil, r18_threshold):
                 return warn_image_output(), "r18"
@@ -128,41 +219,30 @@ def nsfw_detect(pil,
                 return warn_image_output(), "furry"
 
         if filter_choose == "genitalia_nsfw_check":
-            if genitalia_check(pil, genitalia_threshold):
+            if genitalia_check(pil, genitalia_threshold) and genitalia_enabled:
                 return warn_image_output(), "genitalia"
 
         if filter_choose == "porn_nsfw_check":
-            if porn_check(pil, porn_threshold):
+            if porn_check(pil, porn_threshold) and porn_enabled:
                 return warn_image_output(), "porn"
 
         if filter_choose == "sexy_nsfw_check":
-            if sexy_check(pil, sexy_threshold):
+            if sexy_check(pil, sexy_threshold) and sexy_enabled:
                 return warn_image_output(), "sexy"
 
         # Automatic mode, from the most obvious to the least noticeable
         if filter_choose == "auto_nsfw_check":
-            # 01
-            if genitalia_check(pil, genitalia_threshold) and genitalia_enabled:
-                return warn_image_output(), "genitalia"
+            checks = [
+                ("genitalia", genitalia_check, genitalia_threshold, genitalia_enabled),
+                ("r18", r18_check, r18_threshold, r18_enabled),
+                ("porn", porn_check, porn_threshold, porn_enabled),
+                ("hentai", hentai_check, hentai_threshold, hentai_enabled),
+                ("sexy", sexy_check, sexy_threshold, sexy_enabled),
+                ("furry", furry_check, furry_threshold, furry_enabled)
+            ]
 
-            # 02
-            if r18_check(pil, r18_threshold) and r18_enabled:
-                return warn_image_output(), "r18"
-
-            # 03
-            if porn_check(pil, porn_threshold) and porn_enabled:
-                return warn_image_output(), "porn"
-
-            # 04
-            if hentai_check(pil, hentai_threshold) and hentai_enabled:
-                return warn_image_output(), "hentai"
-
-            # 05
-            if sexy_check(pil, sexy_threshold) and sexy_enabled:
-                return warn_image_output(), "sexy"
-
-            # 06
-            if furry_check(pil, furry_threshold) and furry_enabled:
-                return warn_image_output(), "furry"
+            for check_type, check_func, threshold, enabled in checks:
+                if enabled and check_func(pil, threshold):
+                    return warn_image_output(), check_type
 
     return None, "The pictures are safe"
