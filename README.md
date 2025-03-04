@@ -21,7 +21,14 @@ Node name:Nsfw Image Check Node
 
 Block NSFW images and output warning images
 
-![img.png](img.png)
+![img0.png](img0.png)
+
+![img1.png](img1.png)
+
+Node name:Nsfw area coverage
+
+![img2.png](img2.png)
+
 Interface
 
 `image_requires_in` is IMAGE

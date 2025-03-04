@@ -1,6 +1,7 @@
 from typing import Tuple, Optional, Any
 
 from .modules.nsfw_check import nsfw_detect
+from .modules.nsfw_cover import nsfw_cover
 from .modules.tensor_to_other import tensor_to_pil
 
 
@@ -111,3 +112,53 @@ class NsfwCheckNode:
             return image_requires_in, check_type
 
         return image_check_info, f"|{check_type}| is a filtering rule that is triggered"
+
+
+class NsfwAreaCoverNode:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            # Image input
+            "required": {
+                "image_requires_in": ("IMAGE", {"default": "", "forceInput": True}),
+            },
+
+            # Thresholds for all filtering modes
+            "optional": {
+                "enabled_check": ("BOOLEAN", {"default": True}),
+
+            }
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("image_requires_out",)
+
+    FUNCTION = "nsfw_area_coverage"
+
+    CATEGORY = "image/processing"
+
+    def nsfw_area_coverage(self,
+                           image_requires_in: Any,
+                           enabled_check: bool
+                           ) -> Tuple[Optional[Any]]:
+        """
+        Perform NSFW checks on the input image based on the selected filter mode and thresholds.
+
+        Parameters:
+        image_requires_in (Any): Input image tensor.
+        enabled_check (bool): Whether to enable NSFW checks.
+
+        Returns:
+        Any: Tensor.
+        """
+        pil_image_info = tensor_to_pil(image_requires_in)
+
+        image_check_info = nsfw_cover(
+            pil_image_info,
+            enabled_check
+        )
+
+        return image_check_info,
