@@ -1,7 +1,7 @@
 [project]
 name = "nsfw-image-check-comfyui"
 description = "NODES:Nsfw Image Check or Cover Node, The size and dependency of the library are very small, which reduces the problem of conflicts"
-version = "1.1.0"
+version = "1.1.1"
 license = {file = "LICENSE"}
 dependencies = ["numpy", "opencv-python", "pillow", "typing", "onnxruntime", "torchvision"]
 
