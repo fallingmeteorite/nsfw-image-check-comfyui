@@ -19,6 +19,7 @@ class NsfwCheckNode:
 
             # Thresholds for all filtering modes
             "optional": {
+                "custom_image_out": ("IMAGE", {"default": "", "forceInput": True}),
                 "enabled_check": ("BOOLEAN", {"default": True}),
 
                 "r18_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
@@ -70,7 +71,8 @@ class NsfwCheckNode:
                          porn_enabled: bool,
                          sexy_threshold: float,
                          sexy_enabled: bool,
-                         filter_choose: str) -> Tuple[Optional[Any], str]:
+                         filter_choose: str,
+                         custom_image_out: Any = None) -> Tuple[Optional[Any], str]:
         """
         Perform NSFW checks on the input image based on the selected filter mode and thresholds.
 
@@ -98,6 +100,7 @@ class NsfwCheckNode:
 
         image_check_info, check_type = nsfw_detect(
             pil_image_info,
+            custom_image_out,
             enabled_check,
             r18_threshold, r18_enabled,
             hentai_threshold, hentai_enabled,

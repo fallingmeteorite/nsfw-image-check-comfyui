@@ -3,6 +3,7 @@ import random
 from typing import Tuple, Optional, List, Any
 
 from PIL import Image
+from torch import Tensor
 
 from .tensor_to_other import pil_to_tensor
 from ..detect import detect_censors
@@ -174,6 +175,7 @@ def sexy_check(pil: Image.Image, threshold_sexy: float) -> bool:
 
 
 def nsfw_detect(pil: Image.Image,
+                custom_image_out: Tensor,
                 enabled_check: bool,
                 r18_threshold: float, r18_enabled: bool,
                 hentai_threshold: float, hentai_enabled: bool,
@@ -205,30 +207,33 @@ def nsfw_detect(pil: Image.Image,
     Returns:
     Tuple[Optional[Any], str]: Tensor containing the warning image and the corresponding filter type if triggered, otherwise None and a safety message.
     """
+    if custom_image_out == None:
+        custom_image_out = warn_image_output()
+
     if enabled_check:
         if filter_choose == "r18_nsfw_check":
             if r18_check(pil, r18_threshold):
-                return warn_image_output(), "r18"
+                return custom_image_out, "r18"
 
         if filter_choose == "hentai_nsfw_check":
             if hentai_check(pil, hentai_threshold):
-                return warn_image_output(), "hentai"
+                return custom_image_out, "hentai"
 
         if filter_choose == "furry_nsfw_check":
             if furry_check(pil, furry_threshold):
-                return warn_image_output(), "furry"
+                return custom_image_out, "furry"
 
         if filter_choose == "genitalia_nsfw_check":
             if genitalia_check(pil, genitalia_threshold) and genitalia_enabled:
-                return warn_image_output(), "genitalia"
+                return custom_image_out, "genitalia"
 
         if filter_choose == "porn_nsfw_check":
             if porn_check(pil, porn_threshold) and porn_enabled:
-                return warn_image_output(), "porn"
+                return custom_image_out, "porn"
 
         if filter_choose == "sexy_nsfw_check":
             if sexy_check(pil, sexy_threshold) and sexy_enabled:
-                return warn_image_output(), "sexy"
+                return custom_image_out, "sexy"
 
         # Automatic mode, from the most obvious to the least noticeable
         if filter_choose == "auto_nsfw_check":
@@ -243,6 +248,6 @@ def nsfw_detect(pil: Image.Image,
 
             for check_type, check_func, threshold, enabled in checks:
                 if enabled and check_func(pil, threshold):
-                    return warn_image_output(), check_type
+                    return custom_image_out, check_type
 
     return None, "The pictures are safe"
