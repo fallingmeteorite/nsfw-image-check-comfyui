@@ -20,30 +20,42 @@ class NsfwCheckNode:
             # Thresholds for all filtering modes
             "optional": {
                 "custom_image_out": ("IMAGE", {"default": "", "forceInput": True}),
+
                 "enabled_check": ("BOOLEAN", {"default": True}),
 
                 "r18_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
-                "r18_enabled": ("BOOLEAN", {"default": True}),
 
                 "hentai_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
-                "hentai_enabled": ("BOOLEAN", {"default": True}),
 
                 "furry_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
-                "furry_enabled": ("BOOLEAN", {"default": True}),
 
                 "genitalia_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
-                "genitalia_enabled": ("BOOLEAN", {"default": True}),
 
                 "porn_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
-                "porn_enabled": ("BOOLEAN", {"default": True}),
 
                 "sexy_threshold": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
+
+                "r18_enabled": ("BOOLEAN", {"default": True}),
+
+                "hentai_enabled": ("BOOLEAN", {"default": True}),
+
+                "furry_enabled": ("BOOLEAN", {"default": True}),
+
+                "genitalia_enabled": ("BOOLEAN", {"default": True}),
+
+                "porn_enabled": ("BOOLEAN", {"default": True}),
+
                 "sexy_enabled": ("BOOLEAN", {"default": True}),
 
                 # Select the filter type
                 "filter_choose": (
-                    ["r18_nsfw_check", "hentai_nsfw_check", "furry_nsfw_check", "genitalia_nsfw_check",
-                     "porn_nsfw_check", "sexy_nsfw_check", "auto_nsfw_check"],
+                    ["r18_nsfw_check",
+                     "hentai_nsfw_check",
+                     "furry_nsfw_check",
+                     "genitalia_nsfw_check",
+                     "porn_nsfw_check",
+                     "sexy_nsfw_check",
+                     "auto_nsfw_check"],
                     {"default": "r18_nsfw_check"},
                 ),
             }
