@@ -1,72 +1,69 @@
-# nsfw-image-check-comfyui Manual
+- [English version](./README.md)
+- [中文版本](./README_CN.md)
+
+# nsfw-image-check-comfyui
 
 ## Installation
 
-```
+```commandline
 git clone https://github.com/fallingmeteorite/nsfw-image-check-comfyui.git
+
 cd nsfw-image-check-comfyui
+
 pip install -r requirements.txt
 
 ```
 
 or
 
-```
+```commandline
 comfy node registry-install nsfw-image-check-comfyui
 ```
 
-## Node introduction
+## Node Introduction
 
-Node name:Nsfw Image Check Node
+Node Name:Nsfw Image Check Node
 
-Block NSFW images and output warning images
+Block inappropriate content in images and output a warning image
 
 ![img0.png](img0.png)
 
-Node name:Nsfw area coverage
+Node Name:Nsfw area coverage
+
+Filter out inappropriate content and output
 
 ![img2.png](img1.png)
 
-Interface
+## Parameter Explanation
 
-`image_requires_in` is IMAGE
+`image_requires_in` Input the chart. Usually, VAE decoding or image loading follows.
 
-`image_requires_out` is IMAGE
+`image_requires_out` Used for outputting images, filtering can be done by outputting the original image or the warning
+image.
 
-`custom_image_out` is IMAGE
+`custom_image_out` Custom images used to replace images that trigger detection (optional)
 
-`corresponding_filter_entries` is string to inform triggered filters during automatic checks
+`corresponding_filter_entries` Output the filters triggered by the automatic check mode (optional)
 
-`image_requires_in`: Input diagram. It is usually followed by VAE Decode or load image
+`corresponding_filter_entries`: Used to indicate the filters that have been triggered
 
-`image_requires_out`: Used to output pictures, filter by outputting the original image or output the warning image
+`enabled_check`: Enable detection?
 
-`custom_image_out` Custom images are used to replace the images that trigger detection, which is unnecessary.
+`xxxx threshold`: Threshold for triggering detection. The lower the threshold, the stronger the effect, range (0~1)
 
-`corresponding_filter_entries`: Used to tell the triggered feature filtering
+`xxxx enabled`: Whether to enable this type of detection during the testing period (effective when `filter_choose` is
+set to `auto_nsfw_check`)
 
-## Use
+`filter_choose`: Which filters are enabled when `auto_nsfw_check` is selected will run all filters where `xxxx enabled`
+is `True`.
 
-The model is pre-downloaded, and the plug-in does not need to be connected to the Internet
+The images you want to replace are placed in the `img` folder, with the file extension `.jpg`, and the file names need
+to be changed to sequential numbers.
 
-`enabled_check`: Whether to enable detection, True by default
+## Reference library
 
-`Suffix threshold`: Trigger the filter threshold, the lower the filter, the stronger the effect, the range (0~1), the
-default is 0.5
+Libraries used: https://github.com/deepghs/imgutils
 
-`Suffix enabled`: Whether to enable this type of detection during testing (effective when `filter_choose` is set to `auto`).
-
-`filter_choose`: The enabled filtering mode is a single feature except auto, and it is recommended to select `auto`
-
-The image you want to replace is placed in the `img` folder with the suffix .jpg, and the file name needs to be changed
-to a number
-
-## Refer
-
-Plugins are used:https://github.com/deepghs/imgutils
-
-However, because the plugin disables model downloading, etc., this library is not installed, but part of the modified
-code is directly stored in the plugin folder
-
-
-
+Since the plugin disables features such as model downloading, this library is not installed. Some of the modified code
+is directly stored in the plugin folder, and the models are pre-downloaded. The plugin does not need to connect to the
+internet to be used.
