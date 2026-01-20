@@ -3,6 +3,8 @@
 
 # nsfw-image-check-comfyui
 
+The plugin is currently stable, so it hasn't been updated.
+
 ## Installation
 
 ```commandline
@@ -64,6 +66,8 @@ to be changed to sequential numbers.
 
 Libraries used: https://github.com/deepghs/imgutils
 
-Since the plugin disables features such as model downloading, this library is not installed. Some of the modified code
-is directly stored in the plugin folder, and the models are pre-downloaded. The plugin does not need to connect to the
-internet to be used.
+Since the code only requires some functions of this library, installing it would need a large number of dependencies,
+which somewhat goes against my expectation for it to be lightweight. Therefore, I only kept the necessary code and
+removed the online download feature. The model has been downloaded to the plugin folder.
+
+Thanks to this library for completing the core processing part.
