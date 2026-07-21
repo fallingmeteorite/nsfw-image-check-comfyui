@@ -38,7 +38,7 @@ def _open_nsfw_model(model: str = _DEFAULT_MODEL_NAME):
 
 
 def _image_preprocess(image, size: int = 224) -> np.ndarray:
-    """
+    r"""
     Preprocesses the image for NSFW prediction.
 
     The function loads the image, resizes it to the specified ``size``, and converts it to a numpy array.
